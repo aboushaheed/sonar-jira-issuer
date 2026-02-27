@@ -120,10 +120,11 @@ src/main/kotlin/com/sonarjiraissuer/plugin/
 
 ## License
 
-Copyright © 2024 **Abdelmoula Souidi**. All rights reserved.
+Copyright @MIT
 
 ---
 
 ## Contributing
 
 This is a personal project. Bug reports and suggestions are welcome via GitHub Issues.
+
