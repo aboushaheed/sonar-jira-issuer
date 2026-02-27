@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F17C21"/>
+      <stop offset="100%" stop-color="#B84913"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="40" height="40" rx="8" fill="url(#bg)"/>
+
+  <!-- Sonar waves (left side) -->
+  <circle cx="12" cy="20" r="2.5" fill="white"/>
+  <path d="M12 14.5 A5.5 5.5 0 0 1 12 25.5"
+        stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.85"/>
+  <path d="M12 10 A10 10 0 0 1 12 30"
+        stroke="white" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0.45"/>
+
+  <!-- Arrow (middle) -->
+  <line x1="17" y1="20" x2="22" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <polyline points="20,17 23.5,20 20,23"
+            fill="none" stroke="white" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Jira ticket (right side) -->
+  <rect x="25" y="12" width="12" height="16" rx="2.5" fill="white"/>
+  <line x1="27.5" y1="16.5" x2="34.5" y2="16.5" stroke="#F17C21" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="27.5" y1="20"   x2="34.5" y2="20"   stroke="#F17C21" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="27.5" y1="23.5" x2="32"   y2="23.5" stroke="#F17C21" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

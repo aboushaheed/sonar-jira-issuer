@@ -1,0 +1,51 @@
+<idea-plugin>
+    <id>com.sonarjiraissuer.plugin</id>
+    <name>SonarQube Jira Issuer</name>
+    <vendor email="dev@sonarjiraissuer.com" url="https://github.com/yourusername/sonar-jira-issuer">SonarJira Issuer</vendor>
+
+    <description><![CDATA[
+        <b>SonarQube Jira Issuer</b> — Generate Jira-ready ticket content from SonarQube issues.<br/><br/>
+        Connect to your SonarQube server, load issues by type and status, then export
+        batched Jira ticket descriptions (with Jira wiki markup tables) to a local file.
+        Ideal for teams that need to track technical debt in Jira without manual copy-pasting.
+        <br/><br/>
+        <b>Features:</b>
+        <ul>
+            <li>Secure token storage via IntelliJ PasswordSafe (OS keychain)</li>
+            <li>Browse and select SonarQube projects directly from the IDE</li>
+            <li>Filter issues by type (Bug, Code Smell, Vulnerability, Security Hotspot)</li>
+            <li>Automatic story-point calculation (1 SP = 1 working day)</li>
+            <li>Incremental export — already-exported issues are skipped on re-run</li>
+            <li>Jira wiki markup tables that render natively in Jira</li>
+        </ul>
+    ]]></description>
+
+    <change-notes><![CDATA[
+        <b>1.0.0</b> — Initial release.
+    ]]></change-notes>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="SonarJira Issuer"
+                    secondary="false"
+                    anchor="right"
+                    canCloseContents="false"
+                    icon="/icons/toolwindow.svg"
+                    factoryClass="com.sonarjiraissuer.plugin.toolwindow.SonarJiraToolWindowFactory"/>
+
+        <applicationService
+                serviceImplementation="com.sonarjiraissuer.plugin.settings.PluginSettings"/>
+
+        <notificationGroup id="SonarJira Issuer" displayType="BALLOON"/>
+    </extensions>
+
+    <actions>
+        <action id="SonarJiraIssuer.OpenToolWindow"
+                class="com.sonarjiraissuer.plugin.actions.OpenToolWindowAction"
+                text="SonarQube Jira Issuer"
+                description="Open the SonarQube Jira Issuer tool window">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
