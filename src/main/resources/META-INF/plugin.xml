@@ -4,23 +4,78 @@
     <vendor email="dev@sonarjiraissuer.com" url="https://github.com/yourusername/sonar-jira-issuer">SonarJira Issuer</vendor>
 
     <description><![CDATA[
-        <b>SonarQube Jira Issuer</b> — Generate Jira-ready ticket content from SonarQube issues.<br/><br/>
-        Connect to your SonarQube server, load issues by type and status, then export
-        batched Jira ticket descriptions (with Jira wiki markup tables) to a local file.
-        Ideal for teams that need to track technical debt in Jira without manual copy-pasting.
-        <br/><br/>
-        <b>Features:</b>
+        <b>SonarQube Jira Issuer</b> — Load SonarQube issues and push them to Jira as
+        structured, batched tickets — directly from your IDE. No copy-pasting required.<br/><br/>
+
+        Connect to any SonarQube instance (SonarCloud or self-managed), load issues by
+        type and status, then either export ticket descriptions to a local file or
+        <b>create Jira tickets directly</b> via the Jira REST API.<br/><br/>
+
+        <b>Key features:</b>
         <ul>
-            <li>Secure token storage via IntelliJ PasswordSafe (OS keychain)</li>
-            <li>Browse and select SonarQube projects directly from the IDE</li>
-            <li>Filter issues by type (Bug, Code Smell, Vulnerability, Security Hotspot)</li>
-            <li>Automatic story-point calculation (1 SP = 1 working day)</li>
-            <li>Incremental export — already-exported issues are skipped on re-run</li>
-            <li>Jira wiki markup tables that render natively in Jira</li>
+            <li><b>Direct Jira creation</b> — push tickets straight to Jira Cloud or Server/DC</li>
+            <li><b>Sprint selection</b> — assign tickets to an active or future sprint, or leave in backlog</li>
+            <li><b>Dynamic custom fields</b> — all optional Jira fields for the chosen project/issue-type
+                are shown automatically; fill in any you need</li>
+            <li><b>Auto story-point detection</b> — finds the correct story-points field for your Jira
+                setup (Next-Gen or Classic) and sets it automatically from calculated estimates</li>
+            <li><b>Team deduplication</b> — before creating, queries Jira by <code>sq-&lt;key&gt;</code>
+                labels so two developers never create the same ticket twice</li>
+            <li><b>Secure token storage</b> — SonarQube and Jira tokens stored in IntelliJ PasswordSafe
+                (OS keychain / KeePass), never in plain text</li>
+            <li><b>Browse projects</b> — discover accessible SonarQube projects directly from the IDE</li>
+            <li><b>Filter issues</b> — by type (Bug, Code Smell, Vulnerability, Security Hotspot)
+                and status</li>
+            <li><b>Smart batching</b> — group issues into configurable Jira ticket batches</li>
+            <li><b>Automatic story-point calculation</b> — effort estimated from issue data
+                (1 SP = 1 working day), rounded to nearest 0.5</li>
+            <li><b>Epic link support</b> — link created tickets to an existing Epic key</li>
+            <li><b>File export mode</b> — Jira wiki-markup tables for copy-paste workflows</li>
+            <li><b>Incremental export</b> — already-created tickets are never duplicated
+                across runs (tracked via Jira labels and a local mapping file)</li>
+        </ul>
+
+        <b>Supported Jira deployments:</b><br/>
+        <ul>
+            <li><b>Jira Cloud</b> (<code>*.atlassian.net</code>) — API v3, ADF descriptions,
+                Basic auth (email + API token)</li>
+            <li><b>Jira Server / Data Center</b> — API v2, wiki-markup descriptions,
+                Bearer PAT authentication</li>
         </ul>
     ]]></description>
 
     <change-notes><![CDATA[
+        <b>4.0.0</b>
+        <ul>
+            <li>New: Sprint selection — assign tickets to an active or future sprint, or leave in backlog</li>
+            <li>New: Dynamic custom fields editor — all optional Jira fields for the selected
+                project/issue-type are loaded automatically; fill in any you need</li>
+            <li>New: Auto-detection of the story-points field by name (handles both Next-Gen
+                <code>customfield_10016</code> and Classic <code>customfield_10028</code>)</li>
+            <li>New: Team-safe deduplication via <code>sq-&lt;issueKey&gt;</code> Jira labels —
+                queries Jira before creation so no two developers create the same ticket</li>
+            <li>Fix: SonarQube token now saved correctly when using the Test button in the
+                connection dialog (previously required clicking OK)</li>
+            <li>Fix: Both SonarQube and Jira tokens now coexist in PasswordSafe
+                (previously the second token overwrote the first on Windows Credential Manager)</li>
+            <li>Fix: SonarQube connection test now uses <code>HttpURLConnection</code> so IDE proxy
+                settings are honoured; also checks <code>{"valid":false}</code> response body</li>
+        </ul>
+        <b>3.0.0</b>
+        <ul>
+            <li>New: direct Jira ticket creation via Jira REST API v3</li>
+            <li>New: dynamic project and issue-type picker (fields loaded from Jira createmeta)</li>
+            <li>New: deduplication via local mapping file (.sonar-jira-map_&lt;key&gt;.json)</li>
+            <li>New: Jira token stored securely in IntelliJ PasswordSafe</li>
+            <li>New: support for Jira Cloud (Basic auth) and Jira Server/DC (Bearer PAT)</li>
+        </ul>
+        <b>2.0.0</b>
+        <ul>
+            <li>Redesigned UI with section headers and inline token validation</li>
+            <li>SonarQube token moved to IntelliJ PasswordSafe</li>
+            <li>Browse projects dialog</li>
+            <li>Incremental file export with issue-key deduplication</li>
+        </ul>
         <b>1.0.0</b> — Initial release.
     ]]></change-notes>
 

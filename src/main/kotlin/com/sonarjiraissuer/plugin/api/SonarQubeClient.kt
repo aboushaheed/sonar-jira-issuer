@@ -72,13 +72,42 @@ class SonarQubeClient(
 
     /**
      * Validates connectivity and token by calling `/api/authentication/validate`.
+     *
+     * Uses [java.net.HttpURLConnection] (not [java.net.http.HttpClient]) so that
+     * IntelliJ's proxy settings are honoured automatically — same reason as [JiraClient].
+     *
+     * SonarQube returns HTTP 200 + `{"valid":true}` for a valid token, and
+     * HTTP 200 + `{"valid":false}` for an anonymous / invalid token, so we must
+     * check the response body, not just the HTTP status.
+     *
      * @throws SonarApiException if the server is unreachable or the token is invalid.
      */
     fun validateConnection() {
-        val request  = buildRequest(VALIDATE_PATH)
-        val response = execute(request)
-        if (response.statusCode() != 200) {
-            throw SonarApiException(response.statusCode(), "Authentication check failed")
+        val url  = "${normalizedBaseUrl()}$VALIDATE_PATH"
+        val conn = java.net.URL(url).openConnection() as? java.net.HttpURLConnection
+            ?: throw SonarApiException(0, "Cannot open connection to $url")
+        try {
+            conn.connectTimeout          = 10_000
+            conn.readTimeout             = 15_000
+            conn.instanceFollowRedirects = true
+            conn.setRequestProperty("Authorization", "Bearer $token")
+            conn.setRequestProperty("Accept", "application/json")
+            val status = conn.responseCode
+            val body   = try {
+                conn.inputStream.bufferedReader(Charsets.UTF_8).readText()
+            } catch (_: Exception) {
+                conn.errorStream?.bufferedReader(Charsets.UTF_8)?.readText() ?: ""
+            }
+            if (status != 200) throw SonarApiException(status, "Authentication check failed")
+            // {"valid":true} = ok, {"valid":false} = anonymous/bad token (both are HTTP 200)
+            @Suppress("UNCHECKED_CAST")
+            val map   = try { gson.fromJson(body, Map::class.java) as? Map<String, Any> } catch (_: Exception) { null }
+            val valid = map?.get("valid") as? Boolean
+            if (valid == false) throw SonarApiException(401, "Token is invalid or has insufficient permissions")
+        } catch (e: java.io.IOException) {
+            throw SonarApiException(0, "Network error connecting to $url: ${e.message}", e)
+        } finally {
+            conn.disconnect()
         }
     }
 

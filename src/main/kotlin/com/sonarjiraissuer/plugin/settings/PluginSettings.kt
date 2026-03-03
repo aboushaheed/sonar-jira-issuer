@@ -38,7 +38,16 @@ class PluginSettings : PersistentStateComponent<PluginSettings.State> {
         var jiraIssueType: String          = "Task",
         var jiraPriority: String           = "Medium",
         var jiraLabels: String             = "quality,sonar,technical-debt",
-        var outputFolder: String           = ""
+        var outputFolder: String           = "",
+        // Jira direct creation
+        var jiraEnabled: Boolean           = false,
+        var jiraServerUrl: String          = "",
+        var jiraEmail: String              = "",
+        // Remember the last selected Jira project / issue type across sessions
+        var jiraProjectKey: String         = "",
+        var jiraIssueTypeId: String        = "",
+        // Optional epic key to link created tickets to (e.g. "PROJ-42")
+        var epicLink: String               = ""
     )
 
     private var _state = State()
@@ -88,6 +97,30 @@ class PluginSettings : PersistentStateComponent<PluginSettings.State> {
         get() = _state.outputFolder
         set(value) { _state.outputFolder = value }
 
+    var jiraEnabled: Boolean
+        get() = _state.jiraEnabled
+        set(value) { _state.jiraEnabled = value }
+
+    var jiraServerUrl: String
+        get() = _state.jiraServerUrl
+        set(value) { _state.jiraServerUrl = value }
+
+    var jiraEmail: String
+        get() = _state.jiraEmail
+        set(value) { _state.jiraEmail = value }
+
+    var jiraProjectKey: String
+        get() = _state.jiraProjectKey
+        set(value) { _state.jiraProjectKey = value }
+
+    var jiraIssueTypeId: String
+        get() = _state.jiraIssueTypeId
+        set(value) { _state.jiraIssueTypeId = value }
+
+    var epicLink: String
+        get() = _state.epicLink
+        set(value) { _state.epicLink = value }
+
     // ── Secure token storage (OS keychain via PasswordSafe) ────────────────────
 
     /**
@@ -116,11 +149,36 @@ class PluginSettings : PersistentStateComponent<PluginSettings.State> {
     private fun credentialAttributes() =
         CredentialAttributes(SERVICE_NAME, TOKEN_KEY)
 
+    // ── Jira secure token storage ──────────────────────────────────────────────
+
+    fun saveJiraToken(token: String) {
+        val attrs = jiraCredentialAttributes()
+        if (token.isBlank()) {
+            PasswordSafe.instance.set(attrs, null)
+        } else {
+            PasswordSafe.instance.set(attrs, Credentials(JIRA_TOKEN_KEY, token))
+        }
+    }
+
+    fun loadJiraToken(): String =
+        PasswordSafe.instance.getPassword(jiraCredentialAttributes()) ?: ""
+
+    fun clearJiraToken() = PasswordSafe.instance.set(jiraCredentialAttributes(), null)
+
+    private fun jiraCredentialAttributes() =
+        CredentialAttributes(JIRA_SERVICE_NAME, JIRA_TOKEN_KEY)
+
     // ── Companion ──────────────────────────────────────────────────────────────
 
     companion object {
-        private const val SERVICE_NAME = "SonarJiraIssuer"
-        private const val TOKEN_KEY    = "sonarqube-token"
+        // Each token must have its own SERVICE_NAME.
+        // Windows Credential Manager (and some other PasswordSafe backends) key on
+        // serviceName alone, so sharing the same name causes the second save to
+        // overwrite the first.
+        private const val SERVICE_NAME       = "SonarJiraIssuer/SonarQube"
+        private const val JIRA_SERVICE_NAME  = "SonarJiraIssuer/Jira"
+        private const val TOKEN_KEY          = "sonarqube-token"
+        private const val JIRA_TOKEN_KEY     = "jira-token"
 
         fun getInstance(): PluginSettings =
             ApplicationManager.getApplication().getService(PluginSettings::class.java)
