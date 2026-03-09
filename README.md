@@ -1,4 +1,4 @@
-# SonarQube Jira Issuer
+# SonarQube Jira Issuer       [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S11VOB4F)
 
 An IntelliJ IDEA plugin that bridges SonarQube issues to Jira — load issues from any
 SonarQube project and either export batched ticket descriptions to a file, or
@@ -242,3 +242,4 @@ Copyright © 2025 **Abdelmoula Souidi**. All rights reserved.
 ## Contributing
 
 This is a personal project. Bug reports and suggestions are welcome via GitHub Issues.
+
